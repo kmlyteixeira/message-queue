@@ -1,0 +1,19 @@
+{
+  "name": "sender",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node sender.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@azure/service-bus": "^7.9.4",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5"
+  }
+}
