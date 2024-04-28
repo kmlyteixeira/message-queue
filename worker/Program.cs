@@ -1,17 +1,17 @@
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 public class Program
 {
-    static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile("./appsettings.json", optional: true, reloadOnChange: true)
-            .Build();
-
-        string connectionString = configuration["Azure:ConnectionString"] ?? "";
-        string queueName = configuration["Azure:QueueName"] ?? "";
-
-        var processor = new ServiceBusMessageProcessor();
-        await processor.Start(connectionString, queueName);
+        CreateHostBuilder(args).Build().Run();
     }
+
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
 }

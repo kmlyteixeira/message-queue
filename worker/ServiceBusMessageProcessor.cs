@@ -4,11 +4,7 @@ public class ServiceBusMessageProcessor
 {
     public async Task Start(string connectionString, string queueName)
     {
-        var clientOptions = new ServiceBusClientOptions()
-        {
-            TransportType = ServiceBusTransportType.AmqpWebSockets
-        };
-        var client = new ServiceBusClient(connectionString, clientOptions);
+        var client = ServiceBusCommon.CreateClient(connectionString);
         var processor = client.CreateProcessor(queueName, new ServiceBusProcessorOptions());
 
         string filePath = Path.Combine(Environment.CurrentDirectory, "messages.txt");
