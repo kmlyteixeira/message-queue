@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node sender.ts"
+    "start": "ts-node index.ts"
   },
   "keywords": [],
   "author": "",
@@ -12,8 +12,12 @@
   "dependencies": {
     "@azure/service-bus": "^7.9.4",
     "axios": "^1.6.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17"
   }
 }
