@@ -43,28 +43,68 @@ message-queue-project
 |
 ├── sender
 │   ├── sender.ts
+|   ├── index.ts
+|   ├── interface.ts
+|   ├── routes.ts
+|   ├── service.ts
 |   ├── .env-example
 |   ├── package-lock.json
 │   └── package.json
 |
 ├── worker
+│   ├── commons
+│   |   └── ServiceBusCommon.cs
+│   |
+│   ├── dtos
+│   |   ├── MessageBodyDto.cs
+│   |   └── MessageResponseDto.cs
+|   |
 │   ├── Program.cs
+│   ├── Startup.cs
+│   ├── ServiceBusController.cs
 │   ├── ServiceBusMessageProcessor.cs
+│   ├── ServiceBusMessageReceiver.cs
 |   ├── appsettings-example.json
 |   ├── messages.txt
 │   └── worker.csproj
 |
 └── README.md
 ```
-### :file_folder: __SENDER__
+## :file_folder: __SENDER__
 
 Create and send messages to the queue. 
 
-#### :hammer: Built with _Node v.18_ and _Typescript_
+### :hammer: Built with _Node v.18_ and _Typescript_ w/ _axios_
 
-#### :newspaper: Uses [Spaceflight News API](https://www.spaceflightnewsapi.net/) to retrieve articles and create a message
+### :traffic_light: ENDPOINTS
 
-#### :runner: Installing and Running
+#### {POST} /receive-messages
+:newspaper: Uses [Spaceflight News API](https://www.spaceflightnewsapi.net/) to retrieve articles and create a message - it enqueue five articles
+
+#### {POST} /send-message
+:point_up: Create a personalized message to enqueue
+
+##### Request params
+```
+{
+    "title": "string",
+    "imageUrl": "string",
+    "summary": "string",
+    "url": "string"
+}
+```
+
+##### Payload sample
+```
+{
+    "title": "New message??",
+    "imageUrl": "https://wallpaperaccess.com/full/90977.jpg",
+    "summary": "Yes...",
+    "url": "https://github.com/kmlyteixeira"
+}
+```
+
+### :runner: Installing and Running
 
 After create your Service Bus queue (you'll find more here: [Azure Service Bus | Microsoft Learn](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-portal)):
 1.  Clone this repo `https://github.com/kmlyteixeira/message-queue.git`
@@ -72,16 +112,41 @@ After create your Service Bus queue (you'll find more here: [Azure Service Bus |
 3.  Use the `.env-example` file to assign your _connection string_ and _queue name_
 4.  Run `npm install` to install the dependencies 
 5.  Run `npm start`
-6.  The console should display this message: __All articles sent successfully!__
-7.  Track this on the Azure Portal
+6.  The console should display this message: __API de envio de mensagens iniciada em http://localhost:3001__
 
-### :file_folder: __WORKER__
+## :file_folder: __WORKER__
 
 Receives and processes messages from the queue.
 
-#### :hammer: Built with _.NET 8_ 
+### :hammer: Built with _.NET 8_ 
 
-#### :runner: Installing and Running
+### :traffic_light: ENDPOINTS
+
+#### {POST} /api/servicebus/start
+:watch: Starts the processor and waits for new messages to be added to the `messages.txt` file
+
+#### {GET} /api/servicebus/messages
+:mag: Get first 50 enqueued messages from the queue in PEEK MODE
+
+##### Response
+```
+[
+    {
+        "id": "uuid",
+        "enqueuedAt": "timestamp",
+        "state": "string ('Active' | 'Deferred')",
+        "bodySize": "number",
+        "message": {
+            "title": "string",
+            "url": "string",
+            "imageUrl": "string",
+            "summary": "string"
+        }
+    }
+]
+```
+
+### :runner: Installing and Running
 
 After create your Service Bus queue and clone this repo:
 
@@ -89,12 +154,10 @@ After create your Service Bus queue and clone this repo:
 2.  Use the `.appsettings-example.json` file to assign your _connection string_ and _queue name_
 3.  Run `dotnet build worker.csproj` to build this project
 4.  Run `dotnet run worker.csproj`
-5.  The app will process the active messages in the queue and wait for new messages (track this on console)
-6.  Incoming messages will be written to the `messages.txt` file
-7.  Track this on the Azure Portal
+5.  The console should display this message: __Now listening on: http://localhost:5000__
 
 ---
-### :books: __Learn more__
+## :books: __Learn more__
 :one: [Quickstart - Use Azure Service Bus queues from .NET app - Azure Service Bus | Microsoft Learn](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues?tabs=passwordless)
 
 :two: [Create a Queue Service - .NET | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/extensions/queue-service)
